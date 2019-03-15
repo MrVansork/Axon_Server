@@ -17,8 +17,9 @@ class Server:
         print("Server started")
         accept_thread = Thread(target=self.accept_incoming_connections)
         accept_thread.start()
-        accept_thread.join()
-        socket.close()
+
+    def close(self):
+        self.sock.close()
 
     def accept_incoming_connections(self):
         while True:
