@@ -1,6 +1,13 @@
 from pymongo import MongoClient
 
 
-def init(user, passwd):
-    client = MongoClient("mongodb+srv://mrvansork:B00le@cluster0-ajhuk.mongodb.net/test?retryWrites=true")
-    return client.axon
+class Mongo:
+    DB = None
+
+    @staticmethod
+    def init(user, passwd):
+        client = MongoClient(
+            "mongodb+srv://" + user + ":" + passwd + "@cluster0-ajhuk.mongodb.net/test?retryWrites=true")
+        Mongo.DB = client.axon
+        print("Mongo connection initialized")
+        return client.axon

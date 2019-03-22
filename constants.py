@@ -4,7 +4,9 @@ MSG_TAG = "@@MSG@@"
 LOGIN_TAG = "@@LOGIN@@"
 SIGNUP_TAG = "@@SIGNUP@@"
 OK_TAG = "@@OK@@"
-NOPE_TAG = "@@NOPE@@"
+FAILED_TAG = "@@FAILED@@"
+LENGTH_TAG = "@@LEN@@"
+P_KEY_TAG = "@@P_KEY@@"
 
 BIG_TITLE = """          __   __  ____   _   _
     /\    \ \ / / / __ \ | \ | |

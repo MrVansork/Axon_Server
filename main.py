@@ -1,20 +1,17 @@
-from bson.json_util import dumps
-
+from mongo import Mongo
 from constants import BIG_TITLE
 from server import Server
 
-import mongo
+import bcrypt
+
 
 def main():
     print("__________________________________")
     print(BIG_TITLE)
     print("__________________________________\n")
-    # server = Server(8192)
-    # server.start()
-    db = mongo.init("mrvansork", "B00le")
-    user = dumps(db.user.find_one())
-    print(user)
-
+    Mongo.init("mrvansork", "B00le")
+    server = Server(8192)
+    server.start()
 
 
 if __name__ == "__main__":

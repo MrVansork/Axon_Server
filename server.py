@@ -4,11 +4,11 @@ from server_client import ServerClient
 
 
 class Server:
-    clients = {}
-    addresses = {}
 
     def __init__(self, port):
         self.port = port
+        self.clients = {}
+        self.addresses = {}
         self.sock = socket(AF_INET, SOCK_STREAM)
         self.sock.bind(('', port))
 
@@ -29,8 +29,8 @@ class Server:
             Thread(target=self.handle_client, args=(client,)).start()
 
     def handle_client(self, sock):
-        cid = len(self.clients)
-        client = ServerClient(sock, cid)
+        cid = len(self.clients)+1
+        client = ServerClient(sock, cid, self)
         self.clients[cid] = client
 
     def broadcast(self, msg):
