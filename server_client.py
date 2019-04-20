@@ -21,10 +21,11 @@ class ServerClient:
             self.check_user(message)
         elif message.startswith(SIGNUP_TAG):
             self.new_user(message)
-        elif message.startswith(P_KEY_TAG):
-            print("KEY: {}".format(message.split(P_KEY_TAG)[1]))
+        elif message.startswith(QUIT_TAG):
+            self.send_str(QUIT_TAG)
+            self.disconnect()
         else:
-            print(message)
+            print("Unknown: "+message)
 
     def new_user(self, message):
         new_user = message.split(SIGNUP_TAG)[1]
@@ -48,10 +49,11 @@ class ServerClient:
         _user = data['username']
         _password = data['password']
         results = Mongo.DB['user'].find_one({"username": {"$regex": "^" + _user + "$", "$options": "i"}})
-        print("Client: {}".format(_password.encode("utf8")))
-        print("Real: {}".format(results['password']))
         if results is not None:
-            if _password.encode("utf8") == results['password']:
+            print("Client: {}".format(_password.encode("utf8")))
+            print("Real: {}".format(results['password']))
+            if bcrypt.checkpw(_password.encode(), results['password']):
+                print("Password accepted")
                 self.send_str(LOGIN_TAG + OK_TAG)
             else:
                 print("Password incorrect")
@@ -70,6 +72,7 @@ class ServerClient:
 
     def disconnect(self):
         try:
+            self.running = False
             del self.server.clients["testing"]
         except KeyError:
             print("Client with ID: {}, not found".format(str(self.cid)))

@@ -2,8 +2,6 @@ from mongo import Mongo
 from constants import BIG_TITLE
 from server import Server
 
-import bcrypt
-
 
 def main():
     print("__________________________________")
