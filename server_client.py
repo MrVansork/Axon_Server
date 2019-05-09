@@ -1,6 +1,7 @@
 from threading import Thread
 from constants import *
 from mongo import Mongo
+from bson.json_util import dumps
 import bcrypt
 
 import json
@@ -10,6 +11,7 @@ import datetime
 class ServerClient:
     def __init__(self, sock, cid, server):
         self.sock = sock
+        self.username = None
         self.cid = cid
         self.server = server
         self.running = True
@@ -45,22 +47,24 @@ class ServerClient:
     def check_user(self, message):
         data = message.split(LOGIN_TAG)[1]
         data = json.loads(data)
-        print("DATA: " + str(data))
         _user = data['username']
         _password = data['password']
         results = Mongo.DB['user'].find_one({"username": {"$regex": "^" + _user + "$", "$options": "i"}})
         if results is not None:
-            print("Client: {}".format(_password.encode("utf8")))
-            print("Real: {}".format(results['password']))
             if bcrypt.checkpw(_password.encode(), results['password']):
-                print("Password accepted")
+                self.username = _user
                 self.send_str(LOGIN_TAG + OK_TAG)
+                nets = self.get_nets()
+
+                self.send_str("@@NET@@")
             else:
-                print("Password incorrect")
                 self.send_str(LOGIN_TAG + FAILED_TAG)
         else:
-            print("Username incorrect")
             self.send_str(LOGIN_TAG + FAILED_TAG)
+
+    def get_nets(self):
+        results = Mongo.DB['neuralNet'].find({"collaborators": {"$regex": "^"+self.username+"$", "$options": "i"}})
+        return results
 
     def receive(self):
         try:
